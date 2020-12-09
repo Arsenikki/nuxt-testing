@@ -26,7 +26,12 @@
             border-radius="full"
             border-width="1px"
           >
-            <CEditable :default-value="item.name" font-size="2xl" width="90%">
+            <CEditable
+              :is-preview-focusable="showEditMode ? true : false"
+              :default-value="item.name"
+              font-size="2xl"
+              width="90%"
+            >
               <CEditablePreview />
               <CEditableInput />
             </CEditable>
@@ -41,6 +46,7 @@
           {// The new editable one }
           <CButton
             v-if="showEditMode"
+            id="newButton"
             d="flex"
             align-items="center"
             justify-content="space-between"
@@ -50,7 +56,13 @@
             border-radius="full"
             border-width="1px"
           >
-            <CEditable font-size="4xl" width="90%" my="6" @submit="addItem">
+            <CEditable
+              :is-preview-focusable="showEditMode ? true : false"
+              font-size="4xl"
+              width="90%"
+              my="6"
+              @submit="addItem"
+            >
               <CEditablePreview />
               <CEditableInput />
             </CEditable>
@@ -85,6 +97,7 @@ export default {
   },
   data () {
     return {
+      lastAddedItemValue: "",
       bookableItems: [
         {
           id: 0,
@@ -99,21 +112,28 @@ export default {
     }
   },
   methods: {
-    addItem (value) {
-      if (value !== '') {
+    addItem (newValue) {
+      // Prevent duplicate submit on enter + onBlur
+      console.log(newValue)
+
+      if (newValue !== '' && newValue !== this.lastAddedItemValue) {
         const arrayOfIDs = this.bookableItems.map((item) => item.id)
 
         const sortedIDs = arrayOfIDs.sort((a, b) => a - b);
         const missingID = sortedIDs.findIndex((id, index) => id !== index)
         const nextID = missingID !== -1 ? missingID : sortedIDs.length
 
-        this.bookableItems.push(
+        this.bookableItems = [
+          ...this.bookableItems,
           {
             id: nextID,
-            name: value
+            name: newValue
           }
-        )
+        ]
+        this.lastAddedItemValue = newValue
       }
+      console.log(document.getElementById("newButton"))
+      this.newValue = "Click to edit..."
     },
     removeItem(item) {
       const indexToBeDeleted = this.bookableItems.findIndex(object => object === item)
