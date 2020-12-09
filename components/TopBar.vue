@@ -32,7 +32,6 @@ export default {
   },
   methods: {
     $toggleConfigMode() {
-      console.log('asd')
       this.$emit('toggle-config-mode')
     },
     showToast() {
