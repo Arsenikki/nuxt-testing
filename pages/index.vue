@@ -7,67 +7,13 @@
         w="100vw"
         h="90vh"
         flex-dir="column"
+        align-items="center"
         justify-content="center"
       >
         <CHeading text-align="center" mb="8">
           What do you wanna book?
         </CHeading>
-        <CStack :spacing="3">
-          <CButton
-            v-for="item in bookableItems"
-            :key="item.id"
-            :todo="item"
-            d="flex"
-            align-items="center"
-            justify-content="space-between"
-            py="8"
-            mx="10vw"
-            shadow="md"
-            border-radius="full"
-            border-width="1px"
-          >
-            <CEditable
-              :is-preview-focusable="showEditMode ? true : false"
-              :default-value="item.name"
-              font-size="2xl"
-              width="90%"
-            >
-              <CEditablePreview />
-              <CEditableInput />
-            </CEditable>
-
-            <CCloseButton
-              v-if="showEditMode"
-              border-radius="full"
-              size="lg"
-              @click="removeItem(item)"
-            />
-          </CButton>
-          {// The new editable one }
-          <CButton
-            v-if="showEditMode"
-            id="newButton"
-            d="flex"
-            align-items="center"
-            justify-content="space-between"
-            py="8"
-            mx="10vw"
-            shadow="md"
-            border-radius="full"
-            border-width="1px"
-          >
-            <CEditable
-              :is-preview-focusable="showEditMode ? true : false"
-              font-size="4xl"
-              width="90%"
-              my="6"
-              @submit="addItem"
-            >
-              <CEditablePreview />
-              <CEditableInput />
-            </CEditable>
-          </CButton>
-        </CStack>
+        <item-stack :show-edit-mode="showEditMode" />
       </CBox>
     </CBox>
   </div>
@@ -76,64 +22,35 @@
 <script lang="js">
 import {
   CBox,
-  CButton,
-  CCloseButton,
   CHeading,
-  CStack,
-  CEditable, CEditableInput, CEditablePreview
 } from '@chakra-ui/vue'
 
 export default {
   name: 'App',
   components: {
     CBox,
-    CButton,
-    CCloseButton,
     CHeading,
-    CStack,
-    CEditable,
-    CEditableInput,
-    CEditablePreview
   },
   data () {
     return {
-      lastAddedItemValue: "",
-      bookableItems: [
-        {
-          id: 0,
-          name: "🧺 Laundry"
-        },
-        {
-          id: 4,
-          name: "🥵 Sauna"
-        }
-      ],
       showEditMode: false,
     }
   },
   methods: {
-    addItem (newValue) {
-      // Prevent duplicate submit on enter + onBlur
-      console.log(newValue)
+    addItem () {
+      const arrayOfIDs = this.bookableItems.map((item) => item.id)
 
-      if (newValue !== '' && newValue !== this.lastAddedItemValue) {
-        const arrayOfIDs = this.bookableItems.map((item) => item.id)
+      const sortedIDs = arrayOfIDs.sort((a, b) => a - b);
+      const missingID = sortedIDs.findIndex((id, index) => id !== index)
+      const nextID = missingID !== -1 ? missingID : sortedIDs.length
 
-        const sortedIDs = arrayOfIDs.sort((a, b) => a - b);
-        const missingID = sortedIDs.findIndex((id, index) => id !== index)
-        const nextID = missingID !== -1 ? missingID : sortedIDs.length
-
-        this.bookableItems = [
-          ...this.bookableItems,
-          {
-            id: nextID,
-            name: newValue
-          }
-        ]
-        this.lastAddedItemValue = newValue
-      }
-      console.log(document.getElementById("newButton"))
-      this.newValue = "Click to edit..."
+      this.bookableItems = [
+        ...this.bookableItems,
+        {
+          id: nextID,
+          name: ''
+        }
+      ]
     },
     removeItem(item) {
       const indexToBeDeleted = this.bookableItems.findIndex(object => object === item)

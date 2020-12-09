@@ -5,10 +5,13 @@
       right="10px"
       top="10px"
       size="lg"
-      icon="minus"
+      icon="cog"
+      :variant-color="configMode ? 'orange' : 'gray'"
+      transition="variant-color 0.5s"
       aria-label="activate edit mode"
       @click="$toggleConfigMode"
-    />
+    >
+    </CIconButton>
     <CIconButton
       ml="3"
       right="10px"
@@ -25,6 +28,11 @@
 export default {
   name: 'TopBar',
   inject: ['$chakraColorMode', '$toggleColorMode'],
+  data() {
+    return {
+      configMode: false,
+    }
+  },
   computed: {
     colorMode() {
       return this.$chakraColorMode()
@@ -33,14 +41,7 @@ export default {
   methods: {
     $toggleConfigMode() {
       this.$emit('toggle-config-mode')
-    },
-    showToast() {
-      this.$toast({
-        title: 'Dark mode toggled',
-        status: 'success',
-        duration: 2000,
-        isClosable: true,
-      })
+      this.configMode = !this.configMode
     },
   },
 }

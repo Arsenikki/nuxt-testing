@@ -1,3 +1,5 @@
+import { faCog } from '@fortawesome/free-solid-svg-icons'
+
 export default {
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
@@ -45,5 +47,14 @@ export default {
 
   chakra: {
     autoImport: true,
+    icons: {
+      // Here we state that we use `fa`
+      // icons library for Chakra's
+      // internal icon parser
+      iconPack: 'fa',
+      iconSet: {
+        faCog,
+      },
+    },
   },
 }
